@@ -3,7 +3,8 @@ import sys
 import csv
 
 from django.core.management.base import BaseCommand
-from phones.models import Phone as app
+from django.db import IntegrityError
+from phones.models import Phone
 
 
 
@@ -12,18 +13,19 @@ class Command(BaseCommand):
         pass
 
     def handle(self, *args, **options):
+        '''
+        import data from csv file to DB
+        '''
         with open('phones.csv', 'r') as file:
             phones = list(csv.DictReader(file, delimiter=';'))
 
         for phone in phones:
-            # id;name;image;price;release_date;lte_exists
             try:
-                p = app(id=phone['id'], name=phone['name'],\
+                p = Phone.objects.create(id=phone['id'], name=phone['name'],\
                     image=phone['image'], price=phone['price'],\
                         release_date=phone['release_date'], \
                             lte_exists=phone['lte_exists'],\
                                 slug=phone['name'].replace(' ','-'))
-            except:
-                print('Value exist')
+            except IntegrityError:
+                print(f"Value id={phone['id']} exist")
 
-            p.save()

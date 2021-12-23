@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 
 import os
 
+with open("config.txt", 'r', encoding="UTF-8") as f:
+    USER = f.readline().strip()
+    PASSWORD = f.readline().strip()
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -51,12 +55,13 @@ MIDDLEWARE = [
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'netology_models_list',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
+        'USER': USER,
+        'PASSWORD': PASSWORD,
     }
 }
 

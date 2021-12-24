@@ -15,8 +15,13 @@ def books_view(request):
 
 def book_view(request, pub_date: DateField):
     template = 'books/books_list.html'
-    books = [Book.objects.get(pub_date=pub_date)]
+    books = list(Book.objects.all().order_by("pub_date"))
+    length = len(books)
+    pagination = Paginator(books, 1)
+    current_page = books.index(Book.objects.get(pub_date=pub_date))+1
+    page = pagination.get_page(current_page)
     context = {
-        "books": books,
+        "books": page.object_list,
+        "page": page,
     }
     return render(request, template, context)

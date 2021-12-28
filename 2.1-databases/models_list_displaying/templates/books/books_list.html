@@ -17,11 +17,14 @@
             {% endfor %}
         </div>
         {% if page.has_previous %}
-            <a class="button button-primary" href='books/{{books.3.pub_date|date:"Y-m-d"}}/'> <-{{page.objects.3.pub_date|date:"Y-m-d"}}</a>
+            <a class="button button-primary" href='/books/{{dates.0|date:"Y-m-d"}}/'> 
+                <-{{dates.0|date:"Y-m-d"}}
+            </a>
         {% endif %}
-        <a class="button disabled" href="">{{page.number}}</a>
         {% if page.has_next %}
-            <a class="button button-primary" href='/books/{{books.1.pub_date|date:"Y-m-d"}}/'> -> {{page.objects.3.pub_date|date:"Y-m-d"}}</a>
+            <a class="button button-primary" href='/books/{{dates.3|date:"Y-m-d"}}/'>
+                 -> {{dates.3|date:"Y-m-d"}}
+            </a>
         {% endif %}
     </div>
     

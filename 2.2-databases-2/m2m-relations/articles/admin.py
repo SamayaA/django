@@ -1,21 +1,25 @@
 from django.contrib import admin
 from django.core.exceptions import ValidationError
 from django.forms import BaseInlineFormSet
-
+from django import forms
 from .models import Article, Relationship, Scope
 
 class RelationshipInlineFormset(BaseInlineFormSet):
-    def clean(self):
-        for form in self.forms:
-            # В form.cleaned_data будет словарь с данными
-            # каждой отдельной формы, которые вы можете проверить
-            form.cleaned_data
-            # вызовом исключения ValidationError можно указать админке о наличие ошибки
-            # таким образом объект не будет сохранен,
-            # а пользователю выведется соответствующее сообщение об ошибке
-            raise ValidationError('Тут всегда ошибка')
-        return super().clean()  # вызываем базовый код переопределяемого метода
+    tag = forms.IntegerField()
+    article = forms.IntegerField()
+    is_main = forms.BooleanField(required=True)
 
+    def clean(self):
+        super(RelationshipInlineFormset,self).clean()
+        count = 0
+        for form in self.forms:
+            is_main = form.cleaned_data.get('is_main')
+            if type(is_main)== bool:
+                count += int(is_main)
+        if count == 0:
+            raise ValidationError('Выберете основной тег')
+        elif count > 1:
+            raise ValidationError('Основной тег должен быть 1')
 
 class RelationshipInline(admin.TabularInline):
     model = Relationship

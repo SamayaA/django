@@ -2,15 +2,15 @@ from django.contrib import admin
 from django.core.exceptions import ValidationError
 from django.forms import BaseInlineFormSet
 from django import forms
-from .models import Article, Relationship, Scope
+from .models import Article, Scopes, Scope
 
-class RelationshipInlineFormset(BaseInlineFormSet):
+class ScopesInlineFormset(BaseInlineFormSet):
     tag = forms.IntegerField()
     article = forms.IntegerField()
     is_main = forms.BooleanField(required=True)
 
     def clean(self):
-        super(RelationshipInlineFormset,self).clean()
+        super(ScopesInlineFormset,self).clean()
         count = 0
         for form in self.forms:
             is_main = form.cleaned_data.get('is_main')
@@ -21,18 +21,19 @@ class RelationshipInlineFormset(BaseInlineFormSet):
         elif count > 1:
             raise ValidationError('Основной тег должен быть 1')
 
-class RelationshipInline(admin.TabularInline):
-    model = Relationship
-    formset = RelationshipInlineFormset
+class ScopesInline(admin.TabularInline):
+    model = Scopes
+    formset = ScopesInlineFormset
 
 @admin.register(Article)
 class ArticleAdmin(admin.ModelAdmin):
-    inlines = [RelationshipInline]
+    inlines = [ScopesInline]
+    list_display = ("id", "title" )
 
 @admin.register(Scope)
 class ScopeAdmin(admin.ModelAdmin):
     list_display = ("id", "name")
 
-@admin.register(Relationship)
-class RelationshipAdmin(admin.ModelAdmin):
+@admin.register(Scopes)
+class ScopesAdmin(admin.ModelAdmin):
     list_display = ("tag", "article", "is_main")

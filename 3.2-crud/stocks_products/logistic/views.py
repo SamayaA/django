@@ -13,11 +13,15 @@ class ProductViewSet(ModelViewSet):
     filterset_fields = ['id']
     search_fields = ['title', 'description']
 
+class StockSearchFilter(SearchFilter):
+    def __init__(self):
+        super.__init__
+    search_param = 'products'
 
 class StockViewSet(ModelViewSet):
     queryset = Stock.objects.all()
     serializer_class = StockSerializer
-    filter_backends = [filters.DjangoFilterBackend, SearchFilter]
+    filter_backends = [filters.DjangoFilterBackend, StockSearchFilter]
     filterset_fields = ["id", "address"]
     search_fields = ["products__title", "products__description", "products__id"]
 

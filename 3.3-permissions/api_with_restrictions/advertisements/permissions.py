@@ -1,9 +1,10 @@
 from rest_framework.permissions import BasePermission
-class AdvertismentPermission(BasePermission):
+class AdvertisementPermission(BasePermission):
     def has_object_permission(self, request, view, obj):
-        if request.method == 'GET':
+        #Is not DRAFT
+        if request.method == 'GET' and \
+            (obj.status != 'DRAFT' or request.user == obj.creator):
             return True
-        return request.user == obj.creator
+        # is user creator or admin
+        return request.user == obj.creator or request.user.is_staff
              
-        
-        

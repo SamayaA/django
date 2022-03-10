@@ -1,6 +1,7 @@
-from urllib import request
 from rest_framework.viewsets import ModelViewSet
+
 from django_filters import rest_framework as filters
+
 from django.db.models import Q
 
 from advertisements.filters import AdvertisementFilter
@@ -19,7 +20,9 @@ class AdvertisementViewSet(ModelViewSet):
     #Show drafts only to owner
     def get_queryset(self):
         user = self.request.user
-        queryset = Advertisement.objects.filter(~Q(status='DRAFT'))
-        queryset2 = Advertisement.objects.filter(Q(status='DRAFT') and Q(creator__username=user))
-        queryset = queryset.union(queryset2)
+        queryset = Advertisement.objects.filter(~Q(status='DRAFT')|
+        (Q(status='DRAFT') and Q(creator__username=user)))
         return queryset
+    def perform_create(self, serializer):
+        #POST and PATCH methods available only for auth users
+        serializer.save(creator=self.request.user)

@@ -1,4 +1,6 @@
 from django.contrib.auth.models import User
+from django.forms import ValidationError
+
 from rest_framework import serializers
 
 from advertisements.models import Advertisement
@@ -36,4 +38,15 @@ class AdvertisementSerializer(serializers.ModelSerializer):
         # само поле при этом объявляется как `read_only=True`
         validated_data["creator"] = self.context["request"].user
         return super().create(validated_data)
+
+    def validate(self, data):
+        """Метод для валидации. Вызывается при создании и обновлении."""
+        user = self.context["request"].user
+        if self.context["request"].auth == None:
+            raise serializers.ValidationError("You are not authenticated")
+        # can't open advertisement if user already have 10 open advertisements
+        statuses = Advertisement.objects.filter(status="OPEN",creator=user)
+        if (statuses.__len__() >=10):
+            raise serializers.ValidationError('You can\'t open add cause you have 10 open advertisements')
+        return data
 

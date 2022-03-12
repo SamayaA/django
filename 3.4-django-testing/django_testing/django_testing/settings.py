@@ -122,3 +122,5 @@ try:
     from .settings_local import *
 except ImportError:
     pass
+
+MAX_STUDENTS_PER_COURSE = 20

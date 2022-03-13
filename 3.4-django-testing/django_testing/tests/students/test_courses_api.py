@@ -9,9 +9,10 @@ from students.models import Course, Student
 def test_get_course(client, course_factory):
     #Arrange
     courses = course_factory(_quantity=1)
+    some_id = courses[0].id
 
     #Act
-    responce = client.get("/api/v1/courses/1/")
+    responce = client.get(f"/api/v1/courses/{some_id}/")
     data = responce.json()
 
     #Assert
@@ -44,9 +45,10 @@ def test_get_filter_id_courses(client, course_factory):
     #Arrange
     quantity = 2
     courses = course_factory(_quantity=quantity)
+    some_id = courses[0].id
 
     #Act
-    responce = client.get("/api/v1/courses/?id=4")
+    responce = client.get(f"/api/v1/courses/?id={some_id}")
     data = responce.json()
 
     #Assert

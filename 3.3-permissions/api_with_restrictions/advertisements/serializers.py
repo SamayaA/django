@@ -44,9 +44,15 @@ class AdvertisementSerializer(serializers.ModelSerializer):
         user = self.context["request"].user
         if self.context["request"].auth == None:
             raise serializers.ValidationError("You are not authenticated")
-        # can't open advertisement if user already have 10 open advertisements
-        statuses = Advertisement.objects.filter(status="OPEN",creator=user)
-        if (statuses.__len__() >=10):
-            raise serializers.ValidationError('You can\'t open add cause you have 10 open advertisements')
+
+        if self.context["request"].method == "POST" or \
+            (
+                self.context["request"].method == "PATCH" and
+                self.context["request"].data.get("status") == "OPEN"
+            ):
+            # can't open advertisement if user already have 10 open advertisements
+            statuses = Advertisement.objects.filter(status="OPEN",creator=user)
+            if statuses.count() >= 10:
+                raise serializers.ValidationError('You can\'t open add cause you have 10 open advertisements')
         return data
 
